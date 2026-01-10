@@ -1,0 +1,128 @@
+/*
+====================================================
+JENKINS BOOLEAN LOGIC – COMPLETE GUIDE
+====================================================
+
+Topics Covered:
+1. Boolean parameters
+2. Boolean environment variables
+3. AND (&&) logic
+4. OR (||) logic
+5. NOT (!) logic
+6. Boolean logic with when
+7. Boolean logic with if
+8. Real DevOps CI/CD example
+*/
+
+pipeline {
+    agent any
+
+    parameters {
+        booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run tests or skip')
+        booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy application')
+    }
+
+    environment {
+        IS_PROD = "false"
+    }
+
+    stages {
+
+        stage('1️⃣ Boolean Parameter Check') {
+            steps {
+                script {
+                    if (params.RUN_TESTS) {
+                        echo "Tests will run"
+                    } else {
+                        echo "Tests are skipped"
+                    }
+                }
+            }
+        }
+
+        stage('2️⃣ Boolean Environment Variable') {
+            steps {
+                script {
+                    if (env.IS_PROD.toBoolean()) {
+                        echo "Production environment"
+                    } else {
+                        echo "Non-production environment"
+                    }
+                }
+            }
+        }
+
+        stage('3️⃣ AND (&&) Logic') {
+            steps {
+                script {
+                    if (params.RUN_TESTS && params.DEPLOY) {
+                        echo "Run tests AND deploy"
+                    } else {
+                        echo "Condition not fully satisfied"
+                    }
+                }
+            }
+        }
+
+        stage('4️⃣ OR (||) Logic') {
+            steps {
+                script {
+                    if (params.RUN_TESTS || params.DEPLOY) {
+                        echo "Either tests or deploy is enabled"
+                    }
+                }
+            }
+        }
+
+        stage('5️⃣ NOT (!) Logic') {
+            steps {
+                script {
+                    if (!params.DEPLOY) {
+                        echo "Deployment is disabled"
+                    }
+                }
+            }
+        }
+
+        stage('6️⃣ Boolean Logic with when') {
+            when {
+                expression {
+                    return params.DEPLOY && !env.IS_PROD.toBoolean()
+                }
+            }
+            steps {
+                echo "Deploying to NON-PROD environment"
+            }
+        }
+
+        stage('7️⃣ Boolean Logic with if') {
+            steps {
+                script {
+                    if (params.DEPLOY && env.IS_PROD.toBoolean()) {
+                        echo "Deploying to PROD"
+                    } else {
+                        echo "Deployment skipped or non-prod"
+                    }
+                }
+            }
+        }
+
+        stage('8️⃣ Real DevOps CI/CD Example') {
+            steps {
+                script {
+                    if (params.RUN_TESTS) {
+                        sh 'echo "Running tests..."'
+                    }
+
+                    if (params.DEPLOY && !env.IS_PROD.toBoolean()) {
+                        sh 'echo "Deploying to DEV/QA"'
+                    }
+
+                    if (params.DEPLOY && env.IS_PROD.toBoolean()) {
+                        sh 'echo "Deploying to PROD with approvals"'
+                    }
+                }
+            }
+        }
+    }
+}

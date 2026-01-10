@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    stages {
+        stage('Run command with error handling') {
+            steps {
+                script {
+                    try {
+                        sh 'exit 1'  // simulate failure
+                    } catch (e) {
+                        echo "Caught error: ${e}"
+                    }
+
+                    def status = sh script: 'exit 1', returnStatus: true
+                    if (status != 0) {
+                        echo "Command failed with status ${status}"
+                    }
+                }
+            }
+        }
+    }
+}

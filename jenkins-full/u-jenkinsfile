@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'ENV', choices: ['dev', 'qa', 'prod'], description: 'Deployment Environment')
+        booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run tests before deploy?')
+    }
+    environment {
+        APP_NAME = "MyApp"
+    }
+    stages {
+        stage('Build') {
+            steps {
+                echo "Building ${env.APP_NAME} for ${params.ENV}"
+                sh 'mvn clean package'
+            }
+        }
+        stage('Test') {
+            when {
+                expression { return params.RUN_TESTS }
+            }
+            steps {
+                echo "Running tests..."
+                sh 'mvn test'
+            }
+        }
+        stage('Deploy') {
+            when {
+                anyOf {
+                    branch 'main'
+                    branch 'release/*'
+                }
+                expression { return params.ENV != 'dev' }
+            }
+            steps {
+                echo "Deploying to ${params.ENV} environment"
+                // deploy commands here
+            }
+        }
+        stage('Notify') {
+            steps {
+                echo "Notifying team of deployment to ${params.ENV}"
+                // notification commands (email/slack) here
+            }
+        }
+    }
+}

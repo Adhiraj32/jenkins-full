@@ -1,0 +1,122 @@
+/*
+====================================================
+JENKINS `when` CONDITION – COMPLETE GUIDE
+====================================================
+
+Topics Covered:
+1. when with environment variable
+2. when with parameters
+3. when with branch name
+4. when with expression (Groovy)
+5. when with anyOf / allOf
+6. when with beforeAgent
+7. Real DevOps CI/CD example
+*/
+
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'ENV', choices: ['dev', 'qa', 'prod'], description: 'Environment')
+        booleanParam(name: 'DEPLOY', defaultValue: true, description: 'Deploy or not')
+    }
+
+    environment {
+        APP_NAME = "my-app"
+    }
+
+    stages {
+
+        stage('1️⃣ Run only in DEV') {
+            when {
+                environment name: 'ENV', value: 'dev'
+            }
+            steps {
+                echo "Running DEV stage"
+            }
+        }
+
+        stage('2️⃣ Run based on Parameter') {
+            when {
+                expression {
+                    return params.DEPLOY == true
+                }
+            }
+            steps {
+                echo "Deployment enabled"
+            }
+        }
+
+        stage('3️⃣ Run only on main branch') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo "Running on main branch"
+            }
+        }
+
+        stage('4️⃣ when with Groovy Expression') {
+            when {
+                expression {
+                    return env.APP_NAME == "my-app" && params.ENV != 'prod'
+                }
+            }
+            steps {
+                echo "Condition matched using expression"
+            }
+        }
+
+        stage('5️⃣ anyOf Condition') {
+            when {
+                anyOf {
+                    environment name: 'ENV', value: 'dev'
+                    environment name: 'ENV', value: 'qa'
+                }
+            }
+            steps {
+                echo "Running for DEV or QA"
+            }
+        }
+
+        stage('6️⃣ allOf Condition') {
+            when {
+                allOf {
+                    environment name: 'ENV', value: 'prod'
+                    expression { params.DEPLOY == true }
+                }
+            }
+            steps {
+                echo "Running PROD deployment"
+            }
+        }
+
+        stage('7️⃣ beforeAgent Optimization') {
+            when {
+                beforeAgent true
+                environment name: 'ENV', value: 'prod'
+            }
+            agent any
+            steps {
+                echo "Agent allocated only if condition matches"
+            }
+        }
+
+        stage('8️⃣ Real DevOps Example (Build → Deploy)') {
+            when {
+                allOf {
+                    branch 'main'
+                    expression { params.ENV == 'prod' }
+                }
+            }
+            steps {
+                sh '''
+                    echo "Building application"
+                    mvn clean package
+
+                    echo "Deploying to PROD"
+                '''
+            }
+        }
+    }
+}

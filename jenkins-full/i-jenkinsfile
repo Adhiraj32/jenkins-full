@@ -1,0 +1,125 @@
+/*
+====================================================
+JENKINS TRY–CATCH ERROR HANDLING – COMPLETE GUIDE
+====================================================
+
+Topics Covered:
+1. Basic try–catch
+2. Catching sh command failure
+3. finally block usage
+4. Mark build as UNSTABLE
+5. Custom error messages
+6. Try–catch with credentials
+7. Real DevOps CI/CD example
+*/
+
+pipeline {
+    agent any
+
+    stages {
+
+        stage('1️⃣ Basic try–catch') {
+            steps {
+                script {
+                    try {
+                        echo "Inside try block"
+                        int a = 10 / 0   // error
+                    } catch (Exception e) {
+                        echo "Error caught: ${e.message}"
+                    }
+                }
+            }
+        }
+
+        stage('2️⃣ Catch sh Command Failure') {
+            steps {
+                script {
+                    try {
+                        sh 'exit 1'
+                    } catch (Exception e) {
+                        echo "Shell command failed"
+                    }
+                }
+            }
+        }
+
+        stage('3️⃣ finally Block (Always Runs)') {
+            steps {
+                script {
+                    try {
+                        sh 'ls /not-exist'
+                    } catch (Exception e) {
+                        echo "Something went wrong"
+                    } finally {
+                        echo "Cleanup step always runs"
+                    }
+                }
+            }
+        }
+
+        stage('4️⃣ Mark Build UNSTABLE') {
+            steps {
+                script {
+                    try {
+                        sh 'exit 1'
+                    } catch (Exception e) {
+                        currentBuild.result = 'UNSTABLE'
+                        echo "Build marked as UNSTABLE"
+                    }
+                }
+            }
+        }
+
+        stage('5️⃣ Custom Error Message') {
+            steps {
+                script {
+                    try {
+                        error("Manually failing the build")
+                    } catch (Exception e) {
+                        echo "Custom failure handled"
+                    }
+                }
+            }
+        }
+
+        stage('6️⃣ Try–Catch with Credentials') {
+            steps {
+                script {
+                    try {
+                        withCredentials([
+                            string(credentialsId: 'api-token', variable: 'TOKEN')
+                        ]) {
+                            sh 'curl -H "Authorization: Bearer $TOKEN" https://api.example.com'
+                        }
+                    } catch (Exception e) {
+                        echo "API call failed"
+                    }
+                }
+            }
+        }
+
+        stage('7️⃣ Real DevOps CI/CD Example') {
+            steps {
+                script {
+                    try {
+                        sh '''
+                            echo "Building application"
+                            mvn clean package
+                        '''
+
+                        sh '''
+                            echo "Deploying application"
+                            exit 1
+                        '''
+                    } catch (Exception e) {
+                        echo "Deployment failed – rolling back"
+                        sh 'echo "Rollback logic here"'
+                        currentBuild.result = 'FAILURE'
+                    } finally {
+                        echo "Notifying team"
+                    }
+                }
+            }
+        }
+    }
+}

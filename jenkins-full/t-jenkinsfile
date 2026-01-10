@@ -1,0 +1,12 @@
+pipeline {
+    agent any
+    stages {
+        stage('Use credentials') {
+            steps {
+                withCredentials([string(credentialsId: 'my-secret-token', variable: 'TOKEN')]) {
+                    sh 'echo "Using token ${TOKEN}"'
+                }
+            }
+        }
+    }
+}

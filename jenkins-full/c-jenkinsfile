@@ -1,0 +1,118 @@
+/*
+====================================================
+JENKINS PIPELINE – LISTS, ARRAYS & MAPS (COMPLETE)
+====================================================
+
+Topics Covered:
+1. List / Array declaration
+2. Accessing list elements
+3. Looping through list
+4. Map declaration
+5. Accessing map values
+6. Looping through map
+7. Real-life DevOps usage examples
+*/
+
+pipeline {
+    agent any
+
+    stages {
+
+        stage('1️⃣ Lists / Arrays') {
+            steps {
+                script {
+                    // List / Array (same thing in Groovy)
+                    def environments = ["dev", "qa", "prod"]
+                    def ports = [8080, 8081, 80]
+
+                    echo "Environments List: ${environments}"
+                    echo "Ports List: ${ports}"
+
+                    // Access by index
+                    echo "First Environment: ${environments[0]}"
+                    echo "Prod Port: ${ports[2]}"
+                }
+            }
+        }
+
+        stage('2️⃣ Loop Through List') {
+            steps {
+                script {
+                    def servers = ["jenkins", "sonar", "nexus"]
+
+                    for (server in servers) {
+                        echo "Starting service on: ${server}"
+                    }
+                }
+            }
+        }
+
+        stage('3️⃣ Maps (Key-Value Pairs)') {
+            steps {
+                script {
+                    // Map declaration
+                    def envPorts = [
+                        dev  : 8080,
+                        qa   : 8081,
+                        prod : 80
+                    ]
+
+                    echo "Environment → Port Map: ${envPorts}"
+
+                    // Access map value
+                    echo "QA runs on port: ${envPorts['qa']}"
+                }
+            }
+        }
+
+        stage('4️⃣ Loop Through Map') {
+            steps {
+                script {
+                    def envOwners = [
+                        dev  : "Alice",
+                        qa   : "Bob",
+                        prod : "Charlie"
+                    ]
+
+                    envOwners.each { env, owner ->
+                        echo "Environment: ${env} | Owner: ${owner}"
+                    }
+                }
+            }
+        }
+
+        stage('5️⃣ Real-Life DevOps Example') {
+            steps {
+                script {
+                    def envConfig = [
+                        dev  : [port: 8080, replicas: 1],
+                        qa   : [port: 8081, replicas: 2],
+                        prod : [port: 80,   replicas: 4]
+                    ]
+
+                    envConfig.each { env, config ->
+                        echo "Deploying to ${env}"
+                        echo "Port: ${config.port}"
+                        echo "Replicas: ${config.replicas}"
+                    }
+                }
+            }
+        }
+
+        stage('6️⃣ Conditional Use with Map') {
+            steps {
+                script {
+                    def currentEnv = "prod"
+
+                    def timeouts = [
+                        dev  : 5,
+                        qa   : 10,
+                        prod : 30
+                    ]
+
+                    echo "Timeout for ${currentEnv}: ${timeouts[currentEnv]} minutes"
+                }
+            }
+        }
+    }
+}

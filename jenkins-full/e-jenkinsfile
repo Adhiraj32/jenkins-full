@@ -1,0 +1,149 @@
+/*
+====================================================
+JENKINS LOOPS – COMPLETE GUIDE (ONE FILE)
+====================================================
+
+Topics Covered:
+1. for loop (basic)
+2. for loop with list
+3. for loop with range
+4. each loop
+5. while loop
+6. Loop with parameters
+7. Loop with environment variables
+8. Nested loops
+9. Real-life DevOps example (multi-env deployment)
+*/
+
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'ENV', choices: ['dev', 'qa', 'prod'], description: 'Select environment')
+    }
+
+    environment {
+        SERVERS = "app1,app2,app3"
+    }
+
+    stages {
+
+        stage('1️⃣ Basic for loop') {
+            steps {
+                script {
+                    for (int i = 1; i <= 3; i++) {
+                        echo "Iteration number: ${i}"
+                    }
+                }
+            }
+        }
+
+        stage('2️⃣ for loop with list') {
+            steps {
+                script {
+                    def tools = ["git", "maven", "docker"]
+
+                    for (tool in tools) {
+                        echo "Installing tool: ${tool}"
+                    }
+                }
+            }
+        }
+
+        stage('3️⃣ for loop with range') {
+            steps {
+                script {
+                    for (i in 1..5) {
+                        echo "Range loop value: ${i}"
+                    }
+                }
+            }
+        }
+
+        stage('4️⃣ each loop') {
+            steps {
+                script {
+                    def ports = [8080, 8081, 8082]
+
+                    ports.each { port ->
+                        echo "Opening port: ${port}"
+                    }
+                }
+            }
+        }
+
+        stage('5️⃣ while loop') {
+            steps {
+                script {
+                    int count = 1
+
+                    while (count <= 3) {
+                        echo "While loop count: ${count}"
+                        count++
+                    }
+                }
+            }
+        }
+
+        stage('6️⃣ Loop using parameters') {
+            steps {
+                script {
+                    def envMap = [
+                        dev  : ["dev1", "dev2"],
+                        qa   : ["qa1"],
+                        prod : ["prod1", "prod2", "prod3"]
+                    ]
+
+                    for (server in envMap[params.ENV]) {
+                        echo "Deploying to ${server} (${params.ENV})"
+                    }
+                }
+            }
+        }
+
+        stage('7️⃣ Loop using environment variable') {
+            steps {
+                script {
+                    def servers = env.SERVERS.split(",")
+
+                    servers.each { srv ->
+                        echo "Connecting to server: ${srv}"
+                    }
+                }
+            }
+        }
+
+        stage('8️⃣ Nested loops') {
+            steps {
+                script {
+                    def environments = ["dev", "qa"]
+                    def apps = ["frontend", "backend"]
+
+                    for (envName in environments) {
+                        for (app in apps) {
+                            echo "Deploying ${app} to ${envName}"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('9️⃣ Real-Life DevOps Example (Multi-Env Deploy)') {
+            steps {
+                script {
+                    def deployConfig = [
+                        dev  : ["app1", "app2"],
+                        qa   : ["app3"],
+                        prod : ["app4", "app5"]
+                    ]
+
+                    deployConfig.each { envName, apps ->
+                        apps.each { app ->
+                            echo "Deploying ${app} in ${envName}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

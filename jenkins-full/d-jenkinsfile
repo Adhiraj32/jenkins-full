@@ -1,0 +1,147 @@
+/*
+====================================================
+JENKINS CONDITIONS – COMPLETE GUIDE (ONE FILE)
+====================================================
+
+Topics Covered:
+1. if / else condition
+2. if / else if / else
+3. Condition with parameters
+4. Condition with environment variables
+5. when condition (stage-level)
+6. when + expression
+7. when + branch
+8. when + anyOf / allOf
+9. Real-life DevOps conditional deployment
+*/
+
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'ENV', defaultValue: 'dev', description: 'Environment name')
+        booleanParam(name: 'DEPLOY', defaultValue: true, description: 'Deploy or not')
+    }
+
+    environment {
+        APP_NAME = "my-app"
+    }
+
+    stages {
+
+        stage('1️⃣ Simple if / else') {
+            steps {
+                script {
+                    def number = 10
+
+                    if (number > 5) {
+                        echo "Number is greater than 5"
+                    } else {
+                        echo "Number is 5 or less"
+                    }
+                }
+            }
+        }
+
+        stage('2️⃣ if / else if / else') {
+            steps {
+                script {
+                    def envName = params.ENV
+
+                    if (envName == "dev") {
+                        echo "Development Environment"
+                    } else if (envName == "qa") {
+                        echo "QA Environment"
+                    } else if (envName == "prod") {
+                        echo "Production Environment"
+                    } else {
+                        echo "Unknown Environment"
+                    }
+                }
+            }
+        }
+
+        stage('3️⃣ Condition using Parameters') {
+            steps {
+                script {
+                    if (params.DEPLOY) {
+                        echo "Deployment is ENABLED"
+                    } else {
+                        echo "Deployment is DISABLED"
+                    }
+                }
+            }
+        }
+
+        stage('4️⃣ Condition using Environment Variable') {
+            steps {
+                script {
+                    if (env.APP_NAME == "my-app") {
+                        echo "Correct application"
+                    } else {
+                        echo "Wrong application"
+                    }
+                }
+            }
+        }
+
+        stage('5️⃣ when condition (stage level)') {
+            when {
+                expression { params.ENV == "dev" }
+            }
+            steps {
+                echo "This stage runs ONLY for DEV"
+            }
+        }
+
+        stage('6️⃣ when + expression') {
+            when {
+                expression {
+                    params.ENV == "prod" && params.DEPLOY == true
+                }
+            }
+            steps {
+                echo "Production deployment approved"
+            }
+        }
+
+        stage('7️⃣ when + branch') {
+            when {
+                branch "main"
+            }
+            steps {
+                echo "Running on MAIN branch"
+            }
+        }
+
+        stage('8️⃣ when + anyOf / allOf') {
+            when {
+                anyOf {
+                    branch "main"
+                    branch "develop"
+                }
+            }
+            steps {
+                echo "Running on main OR develop branch"
+            }
+        }
+
+        stage('9️⃣ Real-Life DevOps Deployment Condition') {
+            steps {
+                script {
+                    def envConfig = [
+                        dev  : "Low Risk Deployment",
+                        qa   : "Testing Deployment",
+                        prod : "High Risk Deployment"
+                    ]
+
+                    if (envConfig.containsKey(params.ENV)) {
+                        echo envConfig[params.ENV]
+                    } else {
+                        error "Invalid environment selected!"
+                    }
+                }
+            }
+        }
+    }
+}

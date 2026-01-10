@@ -1,0 +1,127 @@
+/*
+====================================================
+JENKINS CREDENTIALS WITH GROOVY – COMPLETE GUIDE
+====================================================
+
+Topics Covered:
+1. Username & Password credentials
+2. Secret Text (Token)
+3. SSH private key
+4. AWS credentials
+5. Using credentials inside sh
+6. Using credentials inside Groovy logic
+7. Real DevOps deployment example
+*/
+
+pipeline {
+    agent any
+
+    stages {
+
+        stage('1️⃣ Username & Password Credential') {
+            steps {
+                script {
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: 'docker-creds',
+                            usernameVariable: 'DOCKER_USER',
+                            passwordVariable: 'DOCKER_PASS'
+                        )
+                    ]) {
+                        echo "Docker username is available"
+                        sh '''
+                            echo "Logging in to Docker"
+                            docker login -u $DOCKER_USER -p $DOCKER_PASS
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('2️⃣ Secret Text (API Token)') {
+            steps {
+                script {
+                    withCredentials([
+                        string(
+                            credentialsId: 'sonar-token',
+                            variable: 'SONAR_TOKEN'
+                        )
+                    ]) {
+                        sh '''
+                            echo "Running Sonar scan"
+                            sonar-scanner -Dsonar.login=$SONAR_TOKEN
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('3️⃣ SSH Private Key') {
+            steps {
+                script {
+                    withCredentials([
+                        sshUserPrivateKey(
+                            credentialsId: 'ec2-ssh-key',
+                            keyFileVariable: 'SSH_KEY',
+                            usernameVariable: 'SSH_USER'
+                        )
+                    ]) {
+                        sh '''
+                            ssh -i $SSH_KEY $SSH_USER@ec2-server "hostname"
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('4️⃣ AWS Credentials') {
+            steps {
+                script {
+                    withCredentials([
+                        [$class: 'AmazonWebServicesCredentialsBinding',
+                         credentialsId: 'aws-creds']
+                    ]) {
+                        sh '''
+                            aws sts get-caller-identity
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('5️⃣ Credentials in Groovy Logic') {
+            steps {
+                script {
+                    withCredentials([
+                        string(credentialsId: 'env-name', variable: 'ENV_NAME')
+                    ]) {
+                        if (ENV_NAME == 'prod') {
+                            echo "Production environment detected"
+                        } else {
+                            echo "Non-production environment"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('6️⃣ Real DevOps Example (Git + Deploy)') {
+            steps {
+                script {
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: 'git-creds',
+                            usernameVariable: 'GIT_USER',
+                            passwordVariable: 'GIT_PASS'
+                        )
+                    ]) {
+                        sh '''
+                            git clone https://$GIT_USER:$GIT_PASS@github.com/org/repo.git
+                            echo "Deploying application..."
+                        '''
+                    }
+                }
+            }
+        }
+    }
+}

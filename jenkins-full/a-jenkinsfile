@@ -1,0 +1,96 @@
+# variable jenkins 
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Example') {
+            steps {
+                script {
+                    def envName = "dev"
+                    echo "Environment is ${envName}"
+                }
+            }
+        }
+    }
+}
+
+pipeline {
+    agent any
+
+    environment {
+        ENV = "dev"
+        APP_NAME = "my-app"
+    }
+
+    stages {
+        stage('Show Vars') {
+            steps {
+                echo "Env: ${ENV}"
+                echo "App: ${APP_NAME}"
+            }
+        }
+    }
+}
+
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'ENV', defaultValue: 'dev', description: 'Environment')
+        choice(name: 'ACTION', choices: ['build', 'deploy'], description: 'Action')
+        booleanParam(name: 'RUN_TESTS', defaultValue: true)
+    }
+
+    stages {
+        stage('Params') {
+            steps {
+                echo "ENV = ${params.ENV}"
+                echo "ACTION = ${params.ACTION}"
+                echo "RUN_TESTS = ${params.RUN_TESTS}"
+            }
+        }
+    }
+}
+
+pipeline {
+    agent any
+
+    environment {
+        ENV = "dev"
+    }
+
+    stages {
+        stage('Shell') {
+            steps {
+                sh '''
+                  echo "Environment is $ENV"
+                '''
+            }
+        }
+    }
+}
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Built-in') {
+            steps {
+                echo "Job Name: ${env.JOB_NAME}"
+                echo "Build Number: ${env.BUILD_NUMBER}"
+                echo "Workspace: ${env.WORKSPACE}"
+            }
+        }
+    }
+}
+
+
+stage('Deploy') {
+    when {
+        expression { params.ENV == 'prod' }
+    }
+    steps {
+        echo "Deploying to PROD"
+    }
+}

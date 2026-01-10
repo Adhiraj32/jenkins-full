@@ -1,0 +1,130 @@
+/*
+====================================================
+JENKINS NULL SAFETY – COMPLETE GUIDE
+====================================================
+
+Topics Covered:
+1. Null check using if
+2. Safe navigation operator (?.)
+3. Elvis operator (?:)
+4. Default values for params/env
+5. Null-safe map access
+6. Null-safe list access
+7. Null safety with credentials
+8. Real DevOps CI/CD example
+*/
+
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'ENV', defaultValue: '', description: 'Environment')
+        string(name: 'VERSION', defaultValue: '', description: 'App version')
+    }
+
+    environment {
+        OPTIONAL_VAR = ""
+    }
+
+    stages {
+
+        stage('1️⃣ Basic Null Check') {
+            steps {
+                script {
+                    def value = null
+
+                    if (value != null) {
+                        echo "Value is ${value}"
+                    } else {
+                        echo "Value is NULL"
+                    }
+                }
+            }
+        }
+
+        stage('2️⃣ Safe Navigation Operator (?.)') {
+            steps {
+                script {
+                    def config = null
+                    echo "Config value: ${config?.env}"
+                }
+            }
+        }
+
+        stage('3️⃣ Elvis Operator (?:)') {
+            steps {
+                script {
+                    def envName = params.ENV ?: "dev"
+                    echo "Environment selected: ${envName}"
+                }
+            }
+        }
+
+        stage('4️⃣ Default Value for Env Variable') {
+            steps {
+                script {
+                    def optional = env.OPTIONAL_VAR ?: "default-value"
+                    echo "Optional value: ${optional}"
+                }
+            }
+        }
+
+        stage('5️⃣ Null-safe Map Access') {
+            steps {
+                script {
+                    def ports = [
+                        dev  : 8080,
+                        qa   : 8081
+                    ]
+
+                    echo "Dev port: ${ports?.dev ?: 0}"
+                    echo "Prod port: ${ports?.prod ?: 0}"
+                }
+            }
+        }
+
+        stage('6️⃣ Null-safe List Access') {
+            steps {
+                script {
+                    def servers = ["srv1", "srv2"]
+
+                    echo "First server: ${servers?.getAt(0) ?: 'none'}"
+                    echo "Third server: ${servers?.getAt(2) ?: 'none'}"
+                }
+            }
+        }
+
+        stage('7️⃣ Null Safety with Credentials') {
+            steps {
+                script {
+                    withCredentials([
+                        string(credentialsId: 'optional-token', variable: 'TOKEN')
+                    ]) {
+                        def tokenValue = env.TOKEN ?: "no-token"
+                        echo "Token present? ${tokenValue != 'no-token'}"
+                    }
+                }
+            }
+        }
+
+        stage('8️⃣ Real DevOps CI/CD Example') {
+            steps {
+                script {
+                    def envName  = params.ENV ?: "dev"
+                    def version  = params.VERSION ?: "latest"
+                    def isProd   = (envName == "prod")
+
+                    if (!version) {
+                        error("Version cannot be null or empty")
+                    }
+
+                    echo "Deploying version ${version} to ${envName}"
+
+                    if (isProd) {
+                        echo "Production safety checks enabled"
+                    }
+                }
+            }
+        }
+    }
+}

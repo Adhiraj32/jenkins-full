@@ -1,0 +1,284 @@
+/****************************************************************************************
+ JENKINS STRING HANDLING – COMPLETE MASTER PIPELINE
+ Covers EVERYTHING you need:
+
+ BASIC
+ 1. Basic string
+ 2. String interpolation
+ 3. Concatenation
+
+ VARIABLES
+ 4. Environment variables
+ 5. Parameters
+ 6. Built-in Jenkins variables
+
+ SHELL
+ 7. Shell string usage
+ 8. Multiline shell strings
+ 9. Escaping strings
+
+ STRING OPERATIONS
+10. Split
+11. Join
+12. Replace
+13. Substring
+14. Trim
+15. Upper / Lower
+16. Contains
+17. StartsWith / EndsWith
+18. Length
+
+ CONDITIONS
+19. String comparison
+20. when condition
+21. switch-case with strings
+
+ REAL DEVOPS
+22. Docker image tagging
+23. Branch-based logic
+24. Terraform env naming
+****************************************************************************************/
+
+pipeline {
+    agent any
+
+    /***********************
+     PARAMETERS
+    ************************/
+    parameters {
+        string(name: 'VERSION', defaultValue: '1.0.0', description: 'App version')
+        choice(name: 'ENV', choices: ['dev', 'qa', 'prod'], description: 'Environment')
+        booleanParam(name: 'RUN_TESTS', defaultValue: true)
+    }
+
+    /************************
+     ENVIRONMENT VARIABLES
+    *************************/
+    environment {
+        APP_NAME = "my-app"
+        REGION   = "ap-south-1"
+        ACCOUNT  = "123456789012"
+    }
+
+    stages {
+
+        stage('1. Basic String') {
+            steps {
+                script {
+                    def msg = "Hello Jenkins"
+                    echo msg
+                }
+            }
+        }
+
+        stage('2. String Interpolation') {
+            steps {
+                script {
+                    echo "Deploying ${APP_NAME} to ${params.ENV}"
+                }
+            }
+        }
+
+        stage('3. Concatenation') {
+            steps {
+                script {
+                    def fullName = APP_NAME + "-" + params.ENV
+                    echo fullName
+                }
+            }
+        }
+
+        stage('4. Environment Variables') {
+            steps {
+                echo "App=${APP_NAME}, Region=${REGION}"
+            }
+        }
+
+        stage('5. Parameters in String') {
+            steps {
+                echo "Version ${params.VERSION} | Env ${params.ENV}"
+            }
+        }
+
+        stage('6. Built-in Jenkins Variables') {
+            steps {
+                echo "Job: ${env.JOB_NAME}"
+                echo "Build: ${env.BUILD_NUMBER}"
+                echo "Workspace: ${env.WORKSPACE}"
+            }
+        }
+
+        stage('7. Shell String Usage') {
+            steps {
+                sh '''
+                  echo "App: $APP_NAME"
+                  echo "Env: $ENV"
+                '''
+            }
+        }
+
+        stage('8. Multiline Shell String') {
+            steps {
+                sh """
+                  echo "Starting build"
+                  echo "App: $APP_NAME"
+                  echo "Env: $ENV"
+                  echo "Version: ${params.VERSION}"
+                """
+            }
+        }
+
+        stage('9. Escaping Strings') {
+            steps {
+                script {
+                    echo "Dollar sign example: \\$HOME"
+                }
+            }
+        }
+
+        stage('10. Split String') {
+            steps {
+                script {
+                    def envs = "dev,qa,prod"
+                    def list = envs.split(",")
+                    echo "First env: ${list[0]}"
+                }
+            }
+        }
+
+        stage('11. Join String') {
+            steps {
+                script {
+                    def items = ["dev", "qa", "prod"]
+                    echo items.join("|")
+                }
+            }
+        }
+
+        stage('12. Replace String') {
+            steps {
+                script {
+                    def image = "myapp:latest"
+                    echo image.replace("latest", params.VERSION)
+                }
+            }
+        }
+
+        stage('13. Substring') {
+            steps {
+                script {
+                    def branch = "feature/login"
+                    echo branch.substring(8)
+                }
+            }
+        }
+
+        stage('14. Trim') {
+            steps {
+                script {
+                    def name = "  prod  "
+                    echo name.trim()
+                }
+            }
+        }
+
+        stage('15. Upper / Lower') {
+            steps {
+                script {
+                    echo params.ENV.toUpperCase()
+                    echo params.ENV.toLowerCase()
+                }
+            }
+        }
+
+        stage('16. Contains') {
+            steps {
+                script {
+                    echo "Contains dev? " + params.ENV.contains("dev")
+                }
+            }
+        }
+
+        stage('17. StartsWith / EndsWith') {
+            steps {
+                script {
+                    def branch = "release-v1.0"
+                    echo branch.startsWith("release").toString()
+                    echo branch.endsWith("1.0").toString()
+                }
+            }
+        }
+
+        stage('18. Length') {
+            steps {
+                script {
+                    echo "Length: ${APP_NAME.length()}"
+                }
+            }
+        }
+
+        stage('19. String Comparison') {
+            steps {
+                script {
+                    if (params.ENV == "prod") {
+                        echo "Production environment"
+                    }
+                }
+            }
+        }
+
+        stage('20. when Condition') {
+            when {
+                expression { params.ENV == "qa" }
+            }
+            steps {
+                echo "QA specific stage"
+            }
+        }
+
+        stage('21. Switch Case with Strings') {
+            steps {
+                script {
+                    switch (params.ENV) {
+                        case "dev":
+                            echo "Dev deployment"
+                            break
+                        case "qa":
+                            echo "QA deployment"
+                            break
+                        case "prod":
+                            echo "Prod deployment"
+                            break
+                    }
+                }
+            }
+        }
+
+        stage('22. Docker Image Tag (Real Life)') {
+            steps {
+                script {
+                    def image = "${ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${APP_NAME}:${params.VERSION}"
+                    echo image
+                }
+            }
+        }
+
+        stage('23. Branch-based Logic') {
+            steps {
+                script {
+                    def branch = env.BRANCH_NAME ?: "main"
+                    echo "Branch: ${branch}"
+                }
+            }
+        }
+
+        stage('24. Terraform Env Naming') {
+            steps {
+                script {
+                    def tfWorkspace = "${APP_NAME}-${params.ENV}"
+                    echo "Terraform workspace: ${tfWorkspace}"
+                }
+            }
+        }
+    }
+}

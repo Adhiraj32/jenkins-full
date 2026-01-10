@@ -1,0 +1,131 @@
+/*
+====================================================
+JENKINS `sh` STEP – COMPLETE GUIDE
+====================================================
+
+Topics Covered:
+1. Basic sh command
+2. Multi-line shell script
+3. Using environment variables
+4. Using Jenkins parameters
+5. Capturing output from sh
+6. Return status (success/failure)
+7. Conditional logic with sh
+8. Loop inside sh
+9. Real DevOps deployment example
+*/
+
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'ENV', choices: ['dev', 'qa', 'prod'], description: 'Environment')
+    }
+
+    environment {
+        APP_NAME = "my-app"
+        APP_PORT = "8080"
+    }
+
+    stages {
+
+        stage('1️⃣ Basic sh command') {
+            steps {
+                sh 'echo "Hello from Jenkins shell step"'
+            }
+        }
+
+        stage('2️⃣ Multi-line shell script') {
+            steps {
+                sh '''
+                    echo "Current directory:"
+                    pwd
+                    echo "Listing files:"
+                    ls -l
+                '''
+            }
+        }
+
+        stage('3️⃣ Using Environment Variables') {
+            steps {
+                sh '''
+                    echo "App Name: $APP_NAME"
+                    echo "App Port: $APP_PORT"
+                '''
+            }
+        }
+
+        stage('4️⃣ Using Jenkins Parameters') {
+            steps {
+                sh '''
+                    echo "Deploying to environment: $ENV"
+                '''
+            }
+        }
+
+        stage('5️⃣ Capture Output from sh') {
+            steps {
+                script {
+                    def hostname = sh(
+                        script: 'hostname',
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Hostname is: ${hostname}"
+                }
+            }
+        }
+
+        stage('6️⃣ Return Status from sh') {
+            steps {
+                script {
+                    def status = sh(
+                        script: 'ls /no-such-folder',
+                        returnStatus: true
+                    )
+
+                    if (status != 0) {
+                        echo "Command failed, but pipeline continues"
+                    }
+                }
+            }
+        }
+
+        stage('7️⃣ Conditional Logic using sh') {
+            steps {
+                sh '''
+                    if [ "$ENV" = "prod" ]; then
+                      echo "Production deployment"
+                    else
+                      echo "Non-production deployment"
+                    fi
+                '''
+            }
+        }
+
+        stage('8️⃣ Loop inside sh') {
+            steps {
+                sh '''
+                    for tool in git maven docker; do
+                      echo "Installing $tool"
+                    done
+                '''
+            }
+        }
+
+        stage('9️⃣ Real DevOps Deployment Example') {
+            steps {
+                sh '''
+                    echo "Building application..."
+                    mvn clean package
+
+                    echo "Stopping old container..."
+                    docker stop my-app || true
+
+                    echo "Starting new container..."
+                    docker run -d -p $APP_PORT:8080 my-app:latest
+                '''
+            }
+        }
+    }
+}

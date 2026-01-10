@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    parameters {
+        booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy after build?')
+    }
+    stages {
+        stage('Build') {
+            steps {
+                echo "Building the application..."
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    if (params.DEPLOY) {
+                        echo "Deploying application..."
+                    } else {
+                        echo "Skipping deployment"
+                    }
+                }
+            }
+        }
+    }
+}
