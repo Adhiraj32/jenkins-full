@@ -1,3 +1,323 @@
+# 🧠 PART 1: STRING HANDLING QUESTIONS (READ ONLY)
+
+## Topic 1: Basic Strings
+
+1. Define a string and print it.
+2. Concatenate two strings and print.
+
+## Topic 2: String Interpolation
+
+3. Use a variable inside a sentence using interpolation.
+4. Show difference between single quotes and double quotes.
+
+## Topic 3: Split Strings
+
+5. Split a string using `/` and print second part.
+6. Print last part of a split string (dynamic index).
+
+## Topic 4: Replace Strings
+
+7. Replace a character in a string.
+8. Replace multiple characters using `replaceAll`.
+
+## Topic 5: Substring & Length
+
+9. Extract first 4 characters from a string.
+10. Print length of a string.
+
+## Topic 6: Case Conversion
+
+11. Convert string to uppercase.
+12. Convert string to lowercase.
+
+## Topic 7: Trim & Cleanup
+
+13. Remove extra spaces from a string.
+
+## Topic 8: Real CI/CD Usage
+
+14. Create Docker image tag using string interpolation.
+15. Create deploy message using env + string ops.
+
+---
+
+# 🧠 PART 2: CODE – QUESTIONS + ANSWERS
+
+👉 **COPY EVERYTHING BELOW IN ONE CLICK**
+
+```groovy
+/******************************************************************
+Q1: Basic string
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q1') {
+            steps {
+                script {
+                    def msg = "Hello Jenkins"
+                    echo msg
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q2: Concatenate strings
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q2') {
+            steps {
+                script {
+                    def a = "Hello"
+                    def b = "World"
+                    echo a + " " + b
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q3: String interpolation
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q3') {
+            steps {
+                script {
+                    def name = "Dhiraj"
+                    echo "Hello ${name}"
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q4: Single vs Double quotes
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q4') {
+            steps {
+                script {
+                    def env = "dev"
+                    echo "Deploying to ${env}"
+                    echo 'Deploying to ${env}'
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q5: Split string
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q5') {
+            steps {
+                script {
+                    def branch = "feature/login"
+                    def parts = branch.split("/")
+                    echo parts[1]
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q6: Last element of split
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q6') {
+            steps {
+                script {
+                    def branch = "feature/auth/login"
+                    def parts = branch.split("/")
+                    echo parts[parts.size() - 1]
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q7: Replace string
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q7') {
+            steps {
+                script {
+                    def version = "v1.2.3"
+                    echo version.replace("v", "")
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q8: replaceAll
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q8') {
+            steps {
+                script {
+                    def name = "my-app-prod"
+                    echo name.replaceAll("-", "_")
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q9: Substring
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q9') {
+            steps {
+                script {
+                    def commit = "a1b2c3d4e5"
+                    echo commit.substring(0, 4)
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q10: String length
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q10') {
+            steps {
+                script {
+                    def app = "jenkins"
+                    echo app.length().toString()
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q11: Uppercase
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q11') {
+            steps {
+                script {
+                    def env = "prod"
+                    echo env.toUpperCase()
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q12: Lowercase
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q12') {
+            steps {
+                script {
+                    def team = "DEVOPS"
+                    echo team.toLowerCase()
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q13: Trim spaces
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q13') {
+            steps {
+                script {
+                    def text = "  hello world  "
+                    echo text.trim()
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q14: Docker image tag (real CI/CD)
+******************************************************************/
+pipeline {
+    agent any
+    environment {
+        APP = "payment"
+        BUILD = "25"
+    }
+    stages {
+        stage('Q14') {
+            steps {
+                echo "docker build -t ${env.APP}:${env.BUILD} ."
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q15: Real deploy message
+******************************************************************/
+pipeline {
+    agent any
+    parameters {
+        string(name: 'ENV', defaultValue: 'dev')
+    }
+    environment {
+        APP = "backend"
+    }
+    stages {
+        stage('Q15') {
+            steps {
+                script {
+                    echo "Deploying ${env.APP.toUpperCase()} to ${params.ENV}"
+                }
+            }
+        }
+    }
+}
+```
+
+---
+
+## 🎯 What this completes
+
+
+
 /****************************************************************************************
  JENKINS STRING HANDLING – COMPLETE MASTER PIPELINE
  Covers EVERYTHING you need:
