@@ -1,3 +1,353 @@
+# 🧠 PART 1: VARIABLE QUESTIONS (READ ONLY)
+
+**Topic 1 – Basic `def`**
+
+1. Define a variable and print it.
+2. Concatenate two variables and print.
+
+**Topic 2 – Scope**
+3. Define a variable in one stage and use it in another (observe failure).
+4. Same variable name in two stages.
+
+**Topic 3 – Environment Variables**
+5. Define env variable and use in two stages.
+6. Use multiple env variables.
+
+**Topic 4 – Parameters**
+7. String parameter and print it.
+8. Parameter + environment variable together.
+
+**Topic 5 – Params vs Env**
+9. Same name for param and env, observe output.
+
+**Topic 6 – Override**
+10. Override env variable inside stage.
+
+**Topic 7 – Conditions**
+11. Run stage only if env value matches.
+
+**Topic 8 – Shell Usage**
+12. Use env variable inside `sh`.
+
+**Topic 9 – Real CI/CD**
+13. Combine param + env in message.
+
+**Topic 10 – Fix Common Mistake**
+14. Fix cross-stage variable issue.
+
+---
+
+# 🧠 PART 2: CODE – QUESTIONS + ANSWERS
+
+👉 **COPY EVERYTHING BELOW IN ONE CLICK**
+
+```groovy
+/******************************************************************
+Q1: Basic def variable
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q1') {
+            steps {
+                script {
+                    def msg = "hello"
+                    echo msg
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q2: Concatenate two variables
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('Q2') {
+            steps {
+                script {
+                    def a = "jenkins"
+                    def b = "pipeline"
+                    echo "${a} ${b}"
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q3: Variable scope failure
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('one') {
+            steps {
+                script {
+                    def app = "web"
+                    echo app
+                }
+            }
+        }
+        stage('two') {
+            steps {
+                script {
+                    // echo app  // ❌ will fail
+                    echo "Variable not accessible here"
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q4: Same variable name in different stages
+******************************************************************/
+pipeline {
+    agent any
+    stages {
+        stage('one') {
+            steps {
+                script {
+                    def env = "dev"
+                    echo env
+                }
+            }
+        }
+        stage('two') {
+            steps {
+                script {
+                    def env = "prod"
+                    echo env
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q5: Environment variable across stages
+******************************************************************/
+pipeline {
+    agent any
+    environment {
+        ENV_NAME = "qa"
+    }
+    stages {
+        stage('one') {
+            steps {
+                echo env.ENV_NAME
+            }
+        }
+        stage('two') {
+            steps {
+                echo env.ENV_NAME
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q6: Multiple environment variables
+******************************************************************/
+pipeline {
+    agent any
+    environment {
+        APP = "myapp"
+        VERSION = "1.0"
+    }
+    stages {
+        stage('print') {
+            steps {
+                echo "${env.APP}-${env.VERSION}"
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q7: String parameter
+******************************************************************/
+pipeline {
+    agent any
+    parameters {
+        string(name: 'DEPLOY_ENV', defaultValue: 'dev')
+    }
+    stages {
+        stage('param') {
+            steps {
+                echo params.DEPLOY_ENV
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q8: Parameter + environment variable
+******************************************************************/
+pipeline {
+    agent any
+    parameters {
+        string(name: 'APP_NAME', defaultValue: 'backend')
+    }
+    environment {
+        REGION = "ap-south-1"
+    }
+    stages {
+        stage('mix') {
+            steps {
+                echo "${params.APP_NAME} - ${env.REGION}"
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q9: Params vs Environment (same name)
+******************************************************************/
+pipeline {
+    agent any
+    parameters {
+        string(name: 'ENV', defaultValue: 'dev')
+    }
+    environment {
+        ENV = "qa"
+    }
+    stages {
+        stage('check') {
+            steps {
+                echo "param=${params.ENV}"
+                echo "env=${env.ENV}"
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q10: Override environment variable
+******************************************************************/
+pipeline {
+    agent any
+    environment {
+        ENV = "dev"
+    }
+    stages {
+        stage('override') {
+            steps {
+                script {
+                    env.ENV = "prod"
+                    echo env.ENV
+                }
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q11: Condition using variable
+******************************************************************/
+pipeline {
+    agent any
+    environment {
+        ENV = "prod"
+    }
+    stages {
+        stage('deploy') {
+            when {
+                expression { env.ENV == "prod" }
+            }
+            steps {
+                echo "Deploying to prod"
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q12: Variable inside shell
+******************************************************************/
+pipeline {
+    agent any
+    environment {
+        APP = "backend"
+    }
+    stages {
+        stage('shell') {
+            steps {
+                sh 'echo Deploying $APP'
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q13: Real CI/CD message
+******************************************************************/
+pipeline {
+    agent any
+    parameters {
+        string(name: 'ENV', defaultValue: 'dev')
+    }
+    environment {
+        APP = "payment"
+    }
+    stages {
+        stage('deploy') {
+            steps {
+                echo "Deploying ${env.APP} to ${params.ENV}"
+            }
+        }
+    }
+}
+
+/******************************************************************
+Q14: Fix cross-stage variable issue
+******************************************************************/
+pipeline {
+    agent any
+    environment {
+        VERSION = "1.0"
+    }
+    stages {
+        stage('build') {
+            steps {
+                echo env.VERSION
+            }
+        }
+        stage('deploy') {
+            steps {
+                echo env.VERSION
+            }
+        }
+    }
+}
+```
+
+---
+
+## ✅ What this gives you
+
+* 🔥 **100% variable coverage**
+* 🔥 Interview-ready understanding
+* 🔥 Real CI/CD patterns
+* 🔥 One-click copy practice file
+
+---
+
+### 🔜 Strong recommendation
+
+Next topics (same format):
+
+1. **String handling (replace, substring, split)**
+2. **Parameters + when conditions**
+3. **Real CI/CD Jenkinsfile (build → test → deploy)**
+
+Just tell me **what to start next** 🚀
+
+
+
 # variable jenkins 
 
 pipeline {
