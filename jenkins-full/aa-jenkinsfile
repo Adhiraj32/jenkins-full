@@ -1,0 +1,415 @@
+Got it 👍
+You want the **FULL internal breakup** of **EACH TOPIC → SUBTOPICS**, so nothing is hidden, nothing vague, nothing extra.
+
+Below is the **FINAL, COMPLETE, EXPERT-LEVEL SCOPE**.
+If you cover **only this**, you are **production-ready Jenkins expert**.
+
+---
+
+# ✅ JENKINS EXPERT ROADMAP
+
+### (Topic → Subtopic → What exactly to cover)
+
+---
+
+## 🧱 1. Groovy for Jenkins (ONLY THIS MUCH)
+
+### 1.1 Variables
+
+* `def var = "value"`
+* Reassigning variables
+* Variable visibility inside `script`
+
+### 1.2 Strings
+
+* Single vs double quotes
+* `${}` interpolation
+* Concatenation
+* Multiline strings
+
+### 1.3 Conditions
+
+* `if`
+* `if / else`
+* `else if`
+* Nested conditions
+
+### 1.4 Boolean Logic
+
+* `true / false`
+* `&&`, `||`, `!`
+* Condition chaining
+
+### 1.5 Lists
+
+* Create list
+* Access by index
+* Loop over list
+* `.size()`
+
+### 1.6 Maps
+
+* Key-value pairs
+* Access value by key
+* Iterate map
+* Real env/config usage
+
+### 1.7 Loops
+
+* `for`
+* `each`
+* Loop with condition
+
+### 1.8 Functions
+
+* Define function
+* Pass parameters
+* Return value
+* Reuse logic
+
+📌 **STOP HERE. This is enough forever.**
+
+---
+
+## 🧱 2. Declarative Pipeline Structure
+
+### 2.1 pipeline
+
+* Why declarative
+* One pipeline per repo
+
+### 2.2 agent
+
+* `any`
+* `label`
+* `docker`
+* Stage-level agent
+
+### 2.3 stages & stage
+
+* Sequential execution
+* Logical separation
+* Naming best practices
+
+### 2.4 steps
+
+* What can go inside steps
+* Step execution order
+
+### 2.5 script
+
+* Why it exists
+* When it is mandatory
+* Mixing Groovy + Jenkins steps
+
+### 2.6 post
+
+* `always`
+* `success`
+* `failure`
+* `unstable`
+* Cleanup logic
+
+### 2.7 options
+
+* `timeout`
+* `retry`
+* `timestamps`
+* `disableConcurrentBuilds`
+
+---
+
+## 🧱 3. Variables in Jenkins (CRITICAL)
+
+### 3.1 Local Variables
+
+* `def var`
+* Scope limitations
+
+### 3.2 Environment Variables
+
+* `environment {}`
+* Global vs stage-level env
+
+### 3.3 env Object
+
+* `env.VAR`
+* Read-only behavior
+* Runtime access
+
+### 3.4 Parameters vs Environment
+
+* When to use params
+* When to use env
+* Overriding behavior
+
+### 3.5 Variable Scope
+
+* Script block scope
+* Stage isolation
+* Why vars disappear
+
+### 3.6 Common Failures
+
+* Undefined variable
+* Wrong scope
+* Shadowing variables
+
+---
+
+## 🧱 4. String Handling (USED EVERYWHERE)
+
+### 4.1 Interpolation
+
+* `${var}`
+* Inside shell
+* Inside echo
+* Nested interpolation
+
+### 4.2 Split
+
+* `split("/")`
+* Access index
+* Dynamic last value
+
+### 4.3 Replace
+
+* `replace()`
+* `replaceAll()`
+* Regex basics
+
+### 4.4 Substring
+
+* Fixed range
+* Dynamic range
+* Commit hash usage
+
+### 4.5 Cleanup
+
+* `trim()`
+* Remove spaces/newlines
+
+### 4.6 Case Conversion
+
+* `toUpperCase()`
+* `toLowerCase()`
+
+### 4.7 Real Usage
+
+* Docker tags
+* Branch parsing
+* Artifact names
+* Log messages
+
+---
+
+## 🧱 5. Parameters (USER INPUT)
+
+### 5.1 Parameter Types
+
+* `string`
+* `choice`
+* `boolean`
+
+### 5.2 Access Parameters
+
+* `params.NAME`
+* Default values
+
+### 5.3 Validation
+
+* Empty check
+* Allowed values
+* Fail pipeline on invalid input
+
+### 5.4 Param-Based Logic
+
+* Conditional stages
+* Env selection
+* Feature toggles
+
+---
+
+## 🧱 6. Conditions (`when`, `if`) 🔥🔥
+
+### 6.1 Declarative `when`
+
+* `branch`
+* `environment`
+* `equals`
+* `expression`
+
+### 6.2 Nested when
+
+* AND / OR conditions
+* Multiple rules
+
+### 6.3 Scripted Conditions
+
+* `if` inside `script`
+* Mixing params + env
+
+### 6.4 Skipping Stages
+
+* Safe skipping
+* Avoiding failures
+* Real production rules
+
+📌 **THIS IS THE CORE OF SENIOR JENKINS**
+
+---
+
+## 🧱 7. Shell & Script Boundary
+
+### 7.1 sh Step
+
+* Single line
+* Multiline
+* Exit code behavior
+
+### 7.2 Passing Variables
+
+* Groovy → shell
+* Shell → Groovy
+
+### 7.3 Capturing Output
+
+* `returnStdout`
+* Parsing output
+
+### 7.4 Error Handling
+
+* Non-zero exit
+* `|| true`
+* Fail vs continue
+
+---
+
+## 🧱 8. Credentials & Secrets
+
+### 8.1 Jenkins Credentials Store
+
+* Types
+* Scope
+
+### 8.2 withCredentials
+
+* Username/password
+* Secret text
+* File credentials
+
+### 8.3 Masking
+
+* Log safety
+* Never echo secrets
+
+### 8.4 Real Use
+
+* Git auth
+* Docker login
+* AWS access
+
+---
+
+## 🧱 9. Error Handling & Stability
+
+### 9.1 try / catch
+
+* Controlled failures
+* Partial success
+
+### 9.2 error()
+
+* Manual failure
+* Custom messages
+
+### 9.3 currentBuild
+
+* Result states
+* Status handling
+
+### 9.4 post Cleanup
+
+* Always cleanup
+* Rollback hooks
+
+---
+
+## 🧱 10. Reusability (EXPERT)
+
+### 10.1 Functions
+
+* Centralized logic
+* Cleaner Jenkinsfiles
+
+### 10.2 Shared Libraries
+
+* Structure
+* vars/
+* src/
+
+### 10.3 DRY Pipelines
+
+* Remove duplication
+* Standardize flows
+
+---
+
+## 🧱 11. Real CI/CD Patterns (FINAL FORM)
+
+### 11.1 Multi-Environment
+
+* Dev / QA / Prod
+* Param-based deploy
+
+### 11.2 Deployment Strategies
+
+* Rolling
+* Blue-Green
+
+### 11.3 Approvals
+
+* Manual input
+* Prod gating
+
+### 11.4 Rollbacks
+
+* Failure recovery
+* Version rollback
+
+### 11.5 Notifications
+
+* Slack / Email
+* Success & failure
+
+### 11.6 Versioning
+
+* Semantic versioning
+* Build tagging
+
+---
+
+## 🧠 FINAL TRUTH (READ THIS TWICE)
+
+If you cover **only the above**:
+
+✅ You can read any Jenkinsfile
+✅ You can design pipelines
+✅ You can debug production issues
+✅ You can clear senior DevOps interviews
+
+No extra Jenkins knowledge is required.
+
+---
+
+### 🔜 NEXT STEP (STRICT ORDER)
+
+You are **here** 👉 **Topic 6: `when` conditions**
+
+If you want, next I will:
+
+* Teach **`when` like production rules**
+* Give **real broken pipelines**
+* Make you think like a **senior reviewer**
+
+Just say: **`start when (expert mode)`** 👊
